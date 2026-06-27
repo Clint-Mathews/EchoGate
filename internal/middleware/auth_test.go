@@ -34,14 +34,14 @@ func TestApiKeyAuthMiddleware(t *testing.T) {
 	}{
 		{
 			name:           "Authorized - Valid API Key",
-			headerKey:      xInternalTokenKey, // This assumes xInternalTokenKey is accessible in the same package
+			headerKey:      XInternalTokenKey, // This assumes XInternalTokenKey is accessible in the same package
 			headerValue:    testToken,
 			expectedStatus: http.StatusOK,
 			expectedBody:   "success",
 		},
 		{
 			name:           "Unauthorized - Invalid API Key",
-			headerKey:      xInternalTokenKey,
+			headerKey:      XInternalTokenKey,
 			headerValue:    "wrong-token-value",
 			expectedStatus: http.StatusUnauthorized,
 			expectedBody:   "401 Unauthorized\n", // http.Error automatically appends a newline
@@ -55,7 +55,7 @@ func TestApiKeyAuthMiddleware(t *testing.T) {
 		},
 		{
 			name:           "Unauthorized - Empty Header value",
-			headerKey:      xInternalTokenKey,
+			headerKey:      XInternalTokenKey,
 			headerValue:    "",
 			expectedStatus: http.StatusUnauthorized,
 			expectedBody:   "401 Unauthorized\n",

@@ -33,3 +33,7 @@ func GetRESTPort() int {
 func GetXInternalToken() string {
 	return viper.GetString("X_INTERNAL_TOKEN")
 }
+
+func GetRedirectURL() string {
+	return viper.GetString("REDIRECT_URL")
+}

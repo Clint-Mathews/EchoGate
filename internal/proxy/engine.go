@@ -12,7 +12,7 @@ import (
 )
 
 func ProxyServer() error {
-	redirectURL, err := url.Parse("http://localhost:11434")
+	redirectURL, err := url.Parse(utils.GetRedirectURL())
 	if err != nil {
 		return err
 	}
@@ -21,10 +21,17 @@ func ProxyServer() error {
 			r.SetXForwarded()
 			r.SetURL(redirectURL)
 			// Strip your custom gateway authentication header(s)
-			r.Out.Header.Del("x-api-key")
+			r.Out.Header.Del(middleware.XInternalTokenKey)
 		},
+		// --- ENABLES REAL-TIME STREAMING ---
+		// A negative value tells Go to bypass buffering and flush
+		// response chunks to the client immediately.
+		FlushInterval: -1,
 		ModifyResponse: func(resp *http.Response) error {
 			resp.Header.Set("X-Proxy", "go-reverse-proxy")
+			// Disable downstream buffering. If your proxy sits behind Nginx,
+			// this header forces Nginx to pass Ollama's tokens immediately.
+			resp.Header.Set("X-Accel-Buffering", "no")
 			return nil
 		},
 		ErrorHandler: func(w http.ResponseWriter, r *http.Request, err error) {
